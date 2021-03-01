@@ -1,12 +1,12 @@
-# Decorators for creating model relationships with mobx
+# Create model relationships with mobx
 
-modeled-mobx is a lightweight layer on top of mobx 6 to easily serialize and hydrate javascript classes from JSON 
+modeled-mobx is a lightweight layer on top of MobX 6 to easily serialize and hydrate javascript classes to/from JSON 
 
 
 ## Introduction
 
-modeled-mobx replaces mobx's `makeObservable` with a `modelize` function.  `modelize` adds a "field" and "model" property to 
-configure the model's properties as observables that get and set their values when `serialize` and `hydrate` respectively are called.
+modeled-mobx replaces mobx's `makeObservable` with a `modelize` function.  `modelize` adds "field" and "model" properties to 
+configure the model's fields as observables that get and set their values when `serialize` and `hydrate` respectively are called.
 
 It also includes a `field` and `model` decorator that can optionally be used instead of specifiying each property on the
 options passed to `modelize`
