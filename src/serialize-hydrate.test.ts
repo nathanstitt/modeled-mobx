@@ -12,7 +12,7 @@ class AssociatedModel {
 }
 
 class SerializeTestModel {
-    unModeled: string = ''
+    unModeled = ''
     hasOne?: AssociatedModel
     hasMany: AssociatedModel[] = []
     constructor() {

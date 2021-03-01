@@ -1,11 +1,11 @@
 import { findOrCreateSchema } from './schema'
 import { observable, makeObservable, AnnotationsMap, CreateObservableOptions } from "mobx"
-import { Model, PropertyOptions } from './types'
+import { Model, ModelInstance, PropertyOptions } from './types'
 import { addModelInterceptors } from './interceptors'
 import { field } from './decorators'
 
 declare type ModelizeProperties<T> = {
-    [P in keyof T]: Function
+    [P in keyof T]: Function // eslint-disable-line @typescript-eslint/ban-types
 }
 
 interface ModelOption extends Function {
@@ -27,18 +27,18 @@ function optionToSchema({
 }
 
 export function modelize<T extends Model>(
-    model: InstanceType<T>,
-    properties?: ModelizeProperties<InstanceType<T>>,
+    model: ModelInstance,
+    properties?: ModelizeProperties<ModelInstance>,
     options?: CreateObservableOptions,
 ) {
     const schema = findOrCreateSchema<T>(model.constructor)
     if (!properties) {
         makeObservable(model)
-        addModelInterceptors<T>(model, schema)
+        addModelInterceptors<ModelInstance>(model, schema)
         return
     }
 
-    const mobxAnnotations: AnnotationsMap<object, PropertyKey> = {}
+    const mobxAnnotations: AnnotationsMap<Record<string, unknown>, PropertyKey> = {}
     Object.keys(properties).forEach(property => {
         const ps = optionToSchema({ options: properties[property] })
         if (ps) {
@@ -53,5 +53,5 @@ export function modelize<T extends Model>(
     })
 
     makeObservable(model, mobxAnnotations, options)
-    addModelInterceptors<T>(model, schema)
+    addModelInterceptors<ModelInstance>(model, schema)
 }

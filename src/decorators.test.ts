@@ -7,7 +7,6 @@ class AssociatedModel {
 
 }
 
-
 class SimpleTestModel {
     @observable energy = 1
     @field bar = 'baz'

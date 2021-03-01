@@ -23,7 +23,7 @@ export function serialize<T extends object>(model: T): JSON {
             if (Array.isArray(value)) {
                 json[prop] = value.map(m => serialize(m))
             } else {
-                json[prop] = value ? serialize<object>(value as any as object) : value
+                json[prop] = value ? serialize<Record<string, unknown>>(value as any) : value
             }
         } else {
             json[prop] = value

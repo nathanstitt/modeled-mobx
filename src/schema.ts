@@ -11,11 +11,12 @@ export function getSchema<T>(ctor: ModelConstructor<T>): Schema<T, keyof T> | fa
 
 export function findOrCreateSchema<T>(ctor: ModelConstructor<T>): Schema<T, keyof T> {
     if (ctor.$mdmx) { return ctor.$mdmx; }
+    const value = new ModelSchema()
     Object.defineProperty(ctor, '$mdmx', {
         enumerable: false,
         writable: false,
         configurable: true,
-        value: new ModelSchema(),
+        value,
     });
-    return ctor.$mdmx!
+    return value
 }

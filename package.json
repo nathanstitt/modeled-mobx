@@ -18,41 +18,43 @@
     "build:tsc": "tsc",
     "build:tsc:watch": "tsc --watch",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
     "test:unit": "jest",
-    "test": "run-s test:unit lint:js test:build",
+    "test": "run-s test:unit lint test:build",
     "test:build": "run-s build",
-    "lint:js": "eslint src/**/*"
+    "lint": "eslint src/*ts"
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.13.1",
+    "@babel/core": "^7.13.8",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-decorators": "^7.13.5",
-    "@babel/preset-env": "^7.13.5",
+    "@babel/preset-env": "^7.13.8",
     "@babel/preset-typescript": "^7.13.0",
-    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/jest-dom": "^5.11.9",
     "@types/jest": "^26.0.20",
-    "@types/node": "^12.12.38",
+    "@types/node": "^14.14.31",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "babel-jest": "^26.6.3",
-    "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-argosity": "3.0.2",
-    "eslint-config-prettier": "^6.7.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.1.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.21.0",
+    "eslint-config-argosity": "3.1.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-promise": "^4.3.1",
     "jest": "^26.6.3",
     "microbundle": "^0.13.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.0.4",
-    "typescript": "^4.0.0"
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.2"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
-    "mobx": "^6.0"
+    "mobx": "^6.1"
   }
 }

@@ -8,6 +8,8 @@ export interface Model extends Function {
     new(...args: any[]): any;
 }
 
+export type ModelInstance = InstanceType<Model>
+
 export type PropertyOptions =
     | { type: 'field' }
     | { type: 'model', model: Model }
