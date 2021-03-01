@@ -15,10 +15,10 @@ options passed to `modelize`
 
 ```typescript
 import { modelize, field, model, hydrate, serialize} from 'modeled-mobx'
-import { observable } from 'mobx'
+import { observable, computed } from 'mobx'
 
 class Item {
-    name: string = ''
+    name: string = ''      // all properties MUST be given values, see edge cases section below
     material: string = ''
     constructor() {
         modelize(this, {
@@ -58,7 +58,7 @@ const box = hydrate(Box, {
 
 console.log(box.items[1].name, box.volume) // Box #2, 1000
 
-console.log(serialize(box)) //
+console.log(serialize(box))
 // {
 //   width: 10, height: 10, depth: 10,
 //   items: [{ name: 'Box #1' }, { name: 'Box #2' }],
