@@ -2,18 +2,16 @@ import { modelize } from './modelize'
 import { getSchema } from './schema'
 import { autorun, observable, runInAction } from "mobx"
 import { field, model } from './decorators'
-//import { Model } from './types'
 
 class AssociatedModel {
 
 }
 
-//const m: Model<AssociatedModel> = AssociatedModel
 
 class SimpleTestModel {
     @observable energy = 1
     @field bar = 'baz'
-    @model({ model: AssociatedModel }) hasOne!: AssociatedModel
+    @model(AssociatedModel) hasOne!: AssociatedModel
 
     constructor() {
         modelize(this)

@@ -1,18 +1,18 @@
 {
   "name": "modeled-mobx",
   "version": "0.0.1",
-  "description": "Mobx powered models",
+  "description": "Mobx powered classes with type-coercion and serialization/hdration",
   "author": "nathanstitt",
   "license": "MIT",
   "repository": "nathanstitt/modeled-mobx",
   "main": "dist/modeled-mobx.js",
   "module": "dist/modeled-mobx.module.js",
+  "exports": "./dist/modeled-mobx.modern.js",
+  "unpkg": "dist/modeled-mobx.umd.js",
   "source": "src/index.ts",
   "engines": {
     "node": ">=10"
   },
-  "exports": "./dist/modeled-mobx.modern.js",
-  "unpkg": "dist/modeled-mobx.umd.js",
   "scripts": {
     "build": "microbundle --no-compress",
     "build:tsc": "tsc",
@@ -22,10 +22,7 @@
     "test:unit": "jest",
     "test": "run-s test:unit lint:js test:build",
     "test:build": "run-s build",
-    "lint:js": "eslint src/**/*",
-    "predeploy": "cd example && yarn install && yarn run build",
-    "deploy": "gh-pages -d example/build",
-    "deploy:demo": "run-s predeploy deploy"
+    "lint:js": "eslint src/**/*"
   },
   "peerDependencies": {},
   "devDependencies": {

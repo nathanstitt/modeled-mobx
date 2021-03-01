@@ -1,11 +1,12 @@
 import { modelize } from './modelize'
 import { hydrate, serialize } from './serialize-hydrate'
+import { model, field } from './decorators'
 
 class AssociatedModel {
     bar?: string
     constructor() {
         modelize(this, {
-            bar: 'field',
+            bar: field,
         })
     }
 }
@@ -16,8 +17,8 @@ class SerializeTestModel {
     hasMany: AssociatedModel[] = []
     constructor() {
         modelize(this, {
-            hasOne: { type: 'model', model: AssociatedModel },
-            hasMany: { type: 'model', model: AssociatedModel },
+            hasOne: model(AssociatedModel),
+            hasMany: model(AssociatedModel),
         })
     }
 }

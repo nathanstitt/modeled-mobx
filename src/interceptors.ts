@@ -31,9 +31,9 @@ export function addModelInterceptors<T extends object>(model: T, schema: ModelSc
     schema.properties.forEach((options, property) => {
         if (options.type === 'model') {
             if (Array.isArray(model[property])) {
-                configureHasMany<T, keyof T>(model, property, model[property] as any as Model)
+                configureHasMany<T, keyof T>(model, property, options.model)
             } else {
-                configureHasOne<T, keyof T>(model, property, model[property] as any as Model)
+                configureHasOne<T, keyof T>(model, property, options.model)
             }
         }
     })

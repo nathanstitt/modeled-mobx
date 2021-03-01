@@ -1,27 +1,36 @@
 import { modelize } from './modelize'
-import { autorun, runInAction } from "mobx"
+import { field, model } from './decorators'
+import { observable, autorun, runInAction } from "mobx"
 
 class AssociatedModel {
 
 }
 
 class SimpleTestModel {
+    mbx = 'unset'
     energy = 1
     bar: AssociatedModel[] = []
     baz!: AssociatedModel
 
     constructor() {
         modelize(this, {
-            energy: 'field',
-            bar: { type: 'model', model: AssociatedModel },
-            baz: { type: 'model', model: AssociatedModel },
+            mbx: observable,
+            energy: field,
+            bar: model(AssociatedModel),
+            baz: model(AssociatedModel),
         })
-        //modelize(this)
     }
 }
 
 describe('Models', () => {
-
+    it('forwards unknown to mobx', () => {
+        const m = new SimpleTestModel()
+        const spy = jest.fn(() => m.mbx)
+        autorun(spy)
+        expect(spy).toHaveBeenCalledTimes(1)
+        runInAction(() => m.mbx = 'set')
+        expect(spy).toHaveBeenCalledTimes(2)
+    })
 
     it('sets fields', () => {
         const m = new SimpleTestModel()
