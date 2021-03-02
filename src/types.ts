@@ -1,5 +1,5 @@
 export interface JSON {
-    readonly [text: string]: JSON | JSON[] | string | number
+    readonly [text: string]: JSON | JSON[] | string | number | boolean
 }
 
 export type PropertyTypes = 'field' | 'model'
