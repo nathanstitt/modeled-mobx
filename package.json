@@ -5,9 +5,13 @@
   "author": "nathanstitt",
   "license": "MIT",
   "repository": "nathanstitt/modeled-mobx",
+  "exports": {
+    "import": "./dist/modeled-mobx.modern.js",
+    "require": "./dist/modeled-mobx.js"
+  },
+  "typings": "dist/index.d.ts",
   "main": "dist/modeled-mobx.js",
   "module": "dist/modeled-mobx.module.js",
-  "exports": "./dist/modeled-mobx.modern.js",
   "unpkg": "dist/modeled-mobx.umd.js",
   "source": "src/index.ts",
   "engines": {
