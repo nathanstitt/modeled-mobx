@@ -23,6 +23,19 @@ class SerializeTestModel {
     }
 }
 
+class HydratedModel {
+    hydrate = jest.fn(function(attrs) {
+        expect(attrs).toEqual({ foo: 'bar' })
+    })
+    serialize = jest.fn(function() {
+        return { bar: 'foo' }
+    })
+    constructor() {
+        modelize(this, {})
+    }
+}
+
+
 describe('Serialize/Hydrate', () => {
     let m!: SerializeTestModel
 
@@ -43,5 +56,13 @@ describe('Serialize/Hydrate', () => {
             hasOne: { bar: 'baz' },
             hasMany: [{ bar: 'foo' }]
         })
+    })
+
+    it('uses hydrate/serialize methods if present', () => {
+        const h = hydrate(HydratedModel, { foo: 'bar' })
+        expect(h.hydrate).toHaveBeenCalled()
+        expect((h as any).foo).toBeUndefined()
+        expect(serialize(h)).toEqual({ bar: 'foo' })
+        expect(h.serialize).toHaveBeenCalled()
     })
 })
