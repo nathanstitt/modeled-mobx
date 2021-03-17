@@ -3,7 +3,7 @@ import { JSON, Model } from './types'
 
 
 export function hydrate<T extends Model>(model: T, attrs: any): InstanceType<T> {
-    const m = new model()
+    const m = new model(attrs)
     if (typeof m.hydrate == 'function') {
         m.hydrate(attrs)
     } else {
