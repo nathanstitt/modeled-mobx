@@ -14,13 +14,13 @@ options passed to `modelize`
 ## Example
 
 ```typescript
-import { modelize, field, model, hydrate, serialize, getParent } from 'modeled-mobx'
+import { modelize, field, model, hydrate, serialize, getParentOf } from 'modeled-mobx'
 import { observable, computed } from 'mobx'
 
 class Item {
     name = ''      // all properties MUST be given values, see edge cases section below
     material = ''
-    get box() { return getParent<Box>(this) }
+    get box() { return getParentOf<Box>(this) }
     constructor() {
         modelize(this, {
             name: field,
