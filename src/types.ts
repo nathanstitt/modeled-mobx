@@ -5,6 +5,7 @@ export interface JSON {
 export type PropertyTypes = 'field' | 'model'
 
 export interface Model extends Function {
+    hydrate?(attrs: any): ModelInstance
     new(...args: any[]): any;
 }
 

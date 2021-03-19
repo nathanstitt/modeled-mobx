@@ -1,28 +1,41 @@
 import { intercept, observable } from "mobx"
 import { hydrate } from './serialize-hydrate'
 import { Model, ModelSchema } from './types'
+import { recordParent } from './inverse'
 
-function configureHasOne<T extends object, K extends keyof T>(model: T, property: K, desiredModel: Model) {
-    intercept<T, K>(model, property, (change: any) => {
-        if (change.newValue && !(change.newValue instanceof desiredModel)) {
-            change.newValue = hydrate(desiredModel, change.newValue)
+function configureHasOne<T extends object, K extends keyof T>(parent: T, property: K, desiredModel: Model) {
+    intercept<T, K>(parent, property, (change: any) => {
+        if (change.newValue) {
+            if (!(change.newValue instanceof desiredModel)) {
+                change.newValue = hydrate(desiredModel, change.newValue)
+            }
+            recordParent(change.newValue, parent)
         }
         return change
     })
 }
 
-function configureHasMany<T extends object, K extends keyof T>(model: T, property: K, desiredModel: Model) {
+function configureHasMany<T extends object, K extends keyof T>(parent: T, property: K, desiredModel: Model) {
     const value = observable.array()
-    model[property] = value as any
-    const toModels = (attrs: Record<string, any>) => attrs instanceof desiredModel ? attrs : hydrate<any>(desiredModel, attrs)
+    parent[property] = value as any
+    const toModel = (attrs: Record<string, any>) => {
+        let child: any
+        if (attrs instanceof desiredModel) {
+            child = attrs
+        } else {
+            child = hydrate<any>(desiredModel, attrs)
+        }
+        recordParent(child, parent)
+        return child
+    }
     intercept(value, (change) => {
         if (change.type == 'splice') {
-            change.added = change.added.map(toModels)
+            change.added = change.added.map(toModel)
         }
         return change
     })
-    intercept<T, K>(model, property, (change: any) => {
-        (model[property] as any).replace(change.newValue.map(toModels))
+    intercept<T, K>(parent, property, (change: any) => {
+        (parent[property] as any).replace(change.newValue.map(toModel))
         return null
     })
 }
