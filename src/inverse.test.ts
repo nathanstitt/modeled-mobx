@@ -1,6 +1,6 @@
 import { modelize } from './modelize'
 import { hydrate } from './serialize-hydrate'
-import { getParent } from './inverse'
+import { getParentOf } from './inverse'
 import { field, model } from './decorators'
 
 class Parent {
@@ -19,7 +19,7 @@ class Parent {
 class Child {
     name = ''
 
-    get parent() {  return getParent<Parent>(this) }
+    get parent() {  return getParentOf<Parent>(this) }
 
     constructor() {
         modelize(this, {

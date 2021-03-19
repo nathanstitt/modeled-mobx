@@ -1,7 +1,7 @@
 import { intercept, observable } from "mobx"
 import { hydrate } from './serialize-hydrate'
 import { Model, ModelSchema } from './types'
-import { recordParent } from './inverse'
+import { recordParentOf } from './inverse'
 
 function configureHasOne<T extends object, K extends keyof T>(parent: T, property: K, desiredModel: Model) {
     intercept<T, K>(parent, property, (change: any) => {
@@ -9,7 +9,7 @@ function configureHasOne<T extends object, K extends keyof T>(parent: T, propert
             if (!(change.newValue instanceof desiredModel)) {
                 change.newValue = hydrate(desiredModel, change.newValue)
             }
-            recordParent(change.newValue, parent)
+            recordParentOf(change.newValue, parent)
         }
         return change
     })
@@ -25,7 +25,7 @@ function configureHasMany<T extends object, K extends keyof T>(parent: T, proper
         } else {
             child = hydrate<any>(desiredModel, attrs)
         }
-        recordParent(child, parent)
+        recordParentOf(child, parent)
         return child
     }
     intercept(value, (change) => {
