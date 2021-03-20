@@ -39,7 +39,7 @@ describe('inverse', () => {
             ]
         })
         expect(parent.faveChild?.name).toEqual('my favorite')
-        expect(parent.faveChild!.parent).toBe(parent)
+        expect(parent.faveChild?.parent).toBe(parent)
         expect(parent.children).toHaveLength(3)
         expect(parent.children[0].parent).toBe(parent)
     })

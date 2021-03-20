@@ -22,9 +22,9 @@ class WithOnlyModel {
         modelize(this)
     }
 }
+
 class Base {
-    constructor() {
-    }
+
 }
 
 class SimpleTestModel extends Base {
@@ -60,7 +60,7 @@ describe('Model using Decorators', () => {
         const spy = jest.fn(() => { m.hasOne })
         autorun(spy)
         expect(spy).toHaveBeenCalledTimes(1)
-        runInAction(() => m.hasOne = {})
+        runInAction(() => m.hasOne = {} as any)
         expect(spy).toHaveBeenCalledTimes(2)
         expect(m.hasOne).toBeInstanceOf(AssociatedModel)
     })
@@ -91,7 +91,7 @@ describe('Model using Decorators', () => {
         const spy = jest.fn(() => { m.hasOne })
         autorun(spy)
         expect(spy).toHaveBeenCalledTimes(1)
-        runInAction(() => m.hasOne = {})
+        runInAction(() => m.hasOne = {} as any)
         expect(spy).toHaveBeenCalledTimes(2)
         expect(m.hasOne).toBeInstanceOf(AssociatedModel)
     })
