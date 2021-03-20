@@ -31,7 +31,7 @@ class HydratedModel {
         return { bar: 'foo' }
     })
     constructor() {
-        modelize(this, {})
+        modelize(this, {}) // shouldn't error with empty properties
     }
 }
 

@@ -1,4 +1,4 @@
-import { findOrCreateSchema } from './schema'
+import { findOrCreateSchema, getSchema } from './schema'
 import { observable, makeObservable, AnnotationsMap, CreateObservableOptions } from "mobx"
 import { Model, ModelInstance, PropertyOptions } from './types'
 import { addModelInterceptors } from './interceptors'
@@ -31,13 +31,16 @@ export function modelize<T extends Model>(
     properties?: ModelizeProperties<ModelInstance>,
     options?: CreateObservableOptions,
 ) {
-    const schema = findOrCreateSchema<T>(model.constructor)
+    let schema = getSchema<T>(model.constructor)
     if (!properties) {
         makeObservable(model)
+        if (!schema) {
+            return  // no decorators have created schema
+        }
         addModelInterceptors<ModelInstance>(model, schema)
         return
     }
-
+    if (!schema) schema = findOrCreateSchema<T>(model.constructor)
     const mobxAnnotations: AnnotationsMap<Record<string, unknown>, PropertyKey> = {}
     Object.keys(properties).forEach(property => {
         const ps = optionToSchema({ options: properties[property] })
