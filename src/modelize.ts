@@ -31,16 +31,17 @@ export function modelize<T extends Model>(
     properties?: ModelizeProperties<ModelInstance>,
     options?: CreateObservableOptions,
 ) {
-    let schema = getSchema<T>(model.constructor)
+    const decoratedSchema = getSchema<T>(model.constructor)
     if (!properties) {
         makeObservable(model)
-        if (!schema) {
+        if (!decoratedSchema) {
             return  // no decorators have created schema
         }
-        addModelInterceptors<ModelInstance>(model, schema)
+        addModelInterceptors<ModelInstance>(model, decoratedSchema)
         return
     }
-    if (!schema) schema = findOrCreateSchema<T>(model.constructor)
+    const schema = decoratedSchema || findOrCreateSchema<T>(model.constructor)
+
     const mobxAnnotations: AnnotationsMap<Record<string, unknown>, PropertyKey> = {}
     Object.keys(properties).forEach(property => {
         const ps = optionToSchema({ options: properties[property] })
