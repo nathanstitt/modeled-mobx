@@ -1,7 +1,9 @@
 const Parents = new WeakMap()
 
 export function recordParentOf(child: any, parent: any) {
-    Parents.set(child, parent)
+    if (child != null && (typeof child == 'object')) {
+        Parents.set(child, parent)
+    }
 }
 
 export function getParentOf<T>(child: any): T {
