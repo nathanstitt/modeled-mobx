@@ -1,3 +1,5 @@
+import { AnnotationsMap } from 'mobx'
+
 export interface JSON {
     readonly [text: string]: JSON | JSON[] | string | number | boolean
 }
@@ -12,8 +14,8 @@ export interface Model extends Function {
 export type ModelInstance = InstanceType<Model>
 
 export type PropertyOptions =
-    | { type: 'field' }
-    | { type: 'model', model: Model }
+    | { type: 'field', annotated: boolean }
+    | { type: 'model', annotated: boolean, model: Model }
 
 export interface ModelSchema<T, K extends keyof T> {
     properties: Map<K, PropertyOptions>
@@ -22,3 +24,5 @@ export interface ModelSchema<T, K extends keyof T> {
 export interface ModelConstructor<T> extends Function {
     $mdmx?: ModelSchema<T, keyof T>
 }
+
+export type AnnotationEntries = AnnotationsMap<Record<string, unknown>, PropertyKey>

@@ -1,6 +1,7 @@
 import { modelize } from './modelize'
 import { hydrate, serialize } from './serialize-hydrate'
 import { model, field } from './decorators'
+import { getParentOf } from './inverse'
 
 class AssociatedModel {
     bar?: string
@@ -59,8 +60,10 @@ describe('Serialize/Hydrate', () => {
     })
 
     it('uses hydrate/serialize methods if present', () => {
-        const h = hydrate(HydratedModel, { foo: 'bar' })
+        const parent = {}
+        const h = hydrate(HydratedModel, { foo: 'bar' }, parent)
         expect(h.hydrate).toHaveBeenCalled()
+        expect(getParentOf(h)).toEqual(parent)
         expect((h as any).foo).toBeUndefined()
         expect(serialize(h)).toEqual({ bar: 'foo' })
         expect(h.serialize).toHaveBeenCalled()

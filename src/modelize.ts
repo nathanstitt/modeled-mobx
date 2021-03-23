@@ -1,7 +1,6 @@
 import { findOrCreateSchema, getSchema } from './schema'
-import { observable, makeObservable, AnnotationsMap, CreateObservableOptions } from "mobx"
-import { Model, ModelInstance, PropertyOptions } from './types'
-import { addModelInterceptors } from './interceptors'
+import { observable, makeObservable, CreateObservableOptions } from "mobx"
+import { Model, ModelInstance, PropertyOptions, AnnotationEntries } from './types'
 import { field } from './decorators'
 
 declare type ModelizeProperties<T> = {
@@ -18,10 +17,10 @@ function optionToSchema({
     options: ModelOption
 }): PropertyOptions | null {
     if (options === field) {
-        return { type: 'field' }
+        return { type: 'field', annotated: false }
     }
     if (typeof options === 'function' && options.model) {
-        return { type: 'model', model: options.model }
+        return { type: 'model', annotated: false, model: options.model }
     }
     return null
 }
@@ -32,17 +31,17 @@ export function modelize<T extends Model>(
     options?: CreateObservableOptions,
 ) {
     const decoratedSchema = getSchema<T>(model.constructor)
+
     if (!properties) {
         makeObservable(model)
         if (!decoratedSchema) {
             return  // no decorators have created schema
         }
-        addModelInterceptors<ModelInstance>(model, decoratedSchema)
         return
     }
     const schema = decoratedSchema || findOrCreateSchema<T>(model.constructor)
 
-    const mobxAnnotations: AnnotationsMap<Record<string, unknown>, PropertyKey> = {}
+    const mobxAnnotations: AnnotationEntries = {}
     Object.keys(properties).forEach(property => {
         const ps = optionToSchema({ options: properties[property] })
         if (ps) {
@@ -51,11 +50,11 @@ export function modelize<T extends Model>(
             mobxAnnotations[property] = properties[property] as any
         }
     })
-
-    schema.properties.forEach((_options, key) => {
-        mobxAnnotations[key] = observable
+    schema.properties.forEach((options, key) => {
+        if (!options.annotated) {
+            mobxAnnotations[key] = observable
+            options.annotated = true
+        }
     })
-
     makeObservable(model, mobxAnnotations, options)
-    addModelInterceptors<ModelInstance>(model, schema)
-}
+  }

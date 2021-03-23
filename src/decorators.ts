@@ -10,17 +10,17 @@ function decorate<T extends object>(model: T, propertyKey: keyof T, options: Pro
 
 export function field<T extends object>(target: T, propertyKey?: keyof T): any {
     if (propertyKey) {
-        decorate<T>(target, propertyKey, { type: 'field' })
+        decorate<T>(target, propertyKey, { type: 'field', annotated: false })
     } else {
         return (target: T, propertyKey: keyof T) => {
-            decorate<T>(target, propertyKey, { type: 'field' })
+            decorate<T>(target, propertyKey, { type: 'field', annotated: false })
         }
     }
 }
 
 export function model(model: Model) {
     const decorator = <T extends object>(target: T, propertyKey: keyof T) => {
-        decorate<T>(target, propertyKey, { type: 'model', model: model })
+        decorate<T>(target, propertyKey, { type: 'model', annotated: false, model: model })
     }
     decorator.model = model
     return decorator

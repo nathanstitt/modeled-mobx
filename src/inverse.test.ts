@@ -38,9 +38,10 @@ describe('inverse', () => {
                 { name: '11' },
             ]
         })
+        expect(parent.faveChild).toBeInstanceOf(Child)
         expect(parent.faveChild?.name).toEqual('my favorite')
         expect(parent.faveChild?.parent).toBe(parent)
         expect(parent.children).toHaveLength(3)
-        expect(parent.children[0].parent).toBe(parent)
+        parent.children.forEach(c => expect(c.parent).toBe(parent))
     })
 })

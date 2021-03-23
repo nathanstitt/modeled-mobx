@@ -58,7 +58,7 @@ const box = hydrate(Box, {
 })
 
 console.log(box.items[1].name, box.volume) // Box #2, 1000
-console.log(box.items[1].box.volume) // 1000
+console.log(box.items[1].box === box) // true 
 console.log(serialize(box))
 // {
 //   width: 10, height: 10, depth: 10,

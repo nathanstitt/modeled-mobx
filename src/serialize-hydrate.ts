@@ -1,20 +1,32 @@
 import { getSchema } from './schema'
-import { JSON, Model } from './types'
+import { JSON, Model, PropertyOptions } from './types'
+import { recordParentOf } from './inverse'
 
 
-export function hydrate<T extends Model>(model: T, attrs: any): InstanceType<T> {
+export function hydrate<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> {
     if (typeof model.hydrate === 'function') {
-        return model.hydrate(attrs)
+        return recordParentOf(model.hydrate(attrs), parent)
     }
-    const m = new model(attrs)
-    if (typeof m.hydrate == 'function') {
-        m.hydrate(attrs)
+    const instance = new model(attrs)
+    recordParentOf(instance, parent)
+    const schema = getSchema<T>(model)
+    if (typeof instance.hydrate == 'function') {
+        instance.hydrate(attrs)
     } else {
-        Object.keys(attrs).forEach(a => {
-            m[a] = attrs[a]
+        Object.keys(attrs).forEach(prop => {
+            const propOptions:PropertyOptions | false | undefined = schema && schema.properties.get(prop as any)
+            if ( propOptions && propOptions.type == 'model') {
+                if (Array.isArray(attrs[prop])) {
+                    instance[prop] = attrs[prop].map((childProps:any) => hydrate(propOptions.model, childProps, instance))
+                } else {
+                    instance[prop] = hydrate(propOptions.model, attrs[prop], instance)
+                }
+            } else {
+                instance[prop] = attrs[prop]
+            }
         })
     }
-    return m
+    return instance
 }
 
 export function serialize<T extends object>(model: T): JSON {
