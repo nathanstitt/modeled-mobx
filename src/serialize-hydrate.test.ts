@@ -4,10 +4,10 @@ import { model, field } from './decorators'
 import { getParentOf } from './inverse'
 
 class AssociatedModel {
-    bar?: string
+    name?: string
     constructor() {
         modelize(this, {
-            bar: field,
+            name: field,
         })
     }
 }
@@ -29,7 +29,7 @@ class HydratedModel {
         expect(attrs).toEqual({ foo: 'bar' })
     })
     serialize = jest.fn(function() {
-        return { bar: 'foo' }
+        return { name: 'foo' }
     })
     constructor() {
         modelize(this, {}) // shouldn't error with empty properties
@@ -41,21 +41,21 @@ describe('Serialize/Hydrate', () => {
     let m!: SerializeTestModel
 
     beforeEach(() => {
-        m = hydrate(SerializeTestModel, { unModeled: 'was set', hasOne: { bar: 'baz' }, hasMany: [{ bar: 'foo' }] })
+        m = hydrate(SerializeTestModel, { unModeled: 'was set', hasOne: { name: 'baz' }, hasMany: [{ name: 'foo' }] })
     })
 
     it('hydrates from JSON', () => {
         expect(m.hasOne).toBeInstanceOf(AssociatedModel)
-        expect(m.hasOne?.bar).toEqual('baz')
+        expect(m.hasOne?.name).toEqual('baz')
         expect(m.hasMany.length).toEqual(1)
-        expect(m.hasMany[0].bar).toEqual('foo')
+        expect(m.hasMany[0].name).toEqual('foo')
         expect(m.unModeled).toEqual('was set')
     })
 
     it('serializes', () => {
         expect(serialize(m)).toEqual({
-            hasOne: { bar: 'baz' },
-            hasMany: [{ bar: 'foo' }]
+            hasOne: { name: 'baz' },
+            hasMany: [{ name: 'foo' }]
         })
     })
 
@@ -65,7 +65,19 @@ describe('Serialize/Hydrate', () => {
         expect(h.hydrate).toHaveBeenCalled()
         expect(getParentOf(h)).toEqual(parent)
         expect((h as any).foo).toBeUndefined()
-        expect(serialize(h)).toEqual({ bar: 'foo' })
+        expect(serialize(h)).toEqual({ name: 'foo' })
         expect(h.serialize).toHaveBeenCalled()
+    })
+
+    it('hydrates arrays', () => {
+        // malformed, not given an array
+        const m = hydrate(SerializeTestModel, { hasMany: { name: 'Bob' } })
+        expect(m.hasMany).toHaveLength(1)
+        expect(m.hasMany[0].name).toEqual('Bob')
+
+        const tm = hydrate(SerializeTestModel, { hasMany: [{ name: 'Jim' }, {name: 'Jill'} ] })
+        expect(tm.hasMany).toHaveLength(2)
+        expect(tm.hasMany[0].name).toEqual('Jim')
+        expect(tm.hasMany[1].name).toEqual('Jill')
     })
 })

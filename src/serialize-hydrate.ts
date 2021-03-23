@@ -16,8 +16,11 @@ export function hydrate<T extends Model>(model: T, attrs: any, parent?: any): In
         Object.keys(attrs).forEach(prop => {
             const propOptions:PropertyOptions | false | undefined = schema && schema.properties.get(prop as any)
             if ( propOptions && propOptions.type == 'model') {
-                if (Array.isArray(attrs[prop])) {
-                    instance[prop] = attrs[prop].map((childProps:any) => hydrate(propOptions.model, childProps, instance))
+                if (Array.isArray(instance[prop])) {
+                    const values = Array.isArray(attrs[prop]) ?
+                        attrs[prop].map((childProps:any) => hydrate(propOptions.model, childProps, instance)) :
+                        [hydrate(propOptions.model, attrs[prop], instance)]
+                    instance[prop].splice(0, instance[prop].length, ...values)
                 } else {
                     instance[prop] = hydrate(propOptions.model, attrs[prop], instance)
                 }
