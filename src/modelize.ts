@@ -1,36 +1,19 @@
 import { findOrCreateSchema, getSchema } from './schema'
 import { observable, makeObservable, CreateObservableOptions } from "mobx"
-import { Model, ModelInstance, PropertyOptions, AnnotationEntries } from './types'
-import { field } from './decorators'
+import { ModelInstance, AnnotationEntries } from './types'
+
 
 declare type ModelizeProperties<T> = {
     [P in keyof T]: Function // eslint-disable-line @typescript-eslint/ban-types
 }
 
-interface ModelOption extends Function {
-    model?: Model
-}
-
-function optionToSchema({
-    options,
-}: {
-    options: ModelOption
-}): PropertyOptions | null {
-    if (options === field) {
-        return { type: 'field', annotated: false }
-    }
-    if (typeof options === 'function' && options.model) {
-        return { type: 'model', annotated: false, model: options.model }
-    }
-    return null
-}
-
-export function modelize<T extends Model>(
+export function modelize(
     model: ModelInstance,
     properties?: ModelizeProperties<ModelInstance>,
     options?: CreateObservableOptions,
 ) {
-    const decoratedSchema = getSchema<T>(model.constructor)
+
+    const decoratedSchema = getSchema(model)
 
     if (!properties) {
         makeObservable(model)
@@ -39,15 +22,12 @@ export function modelize<T extends Model>(
         }
         return
     }
-    const schema = decoratedSchema || findOrCreateSchema<T>(model.constructor)
+    const schema = decoratedSchema || findOrCreateSchema(model)
 
     const mobxAnnotations: AnnotationEntries = {}
     Object.keys(properties).forEach(property => {
-        const ps = optionToSchema({ options: properties[property] })
-        if (ps) {
-            schema.properties.set(property as keyof T, ps)
-        } else {
-            mobxAnnotations[property] = properties[property] as any
+        if (!schema.recordProperty(property, properties[property])) {
+              mobxAnnotations[property] = properties[property] as any
         }
     })
     schema.properties.forEach((options, key) => {

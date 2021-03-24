@@ -13,16 +13,20 @@ export interface Model extends Function {
 
 export type ModelInstance = InstanceType<Model>
 
+export interface ModelOption extends Function {
+    model?: Model
+}
+
 export type PropertyOptions =
     | { type: 'field', annotated: boolean }
     | { type: 'model', annotated: boolean, model: Model }
 
-export interface ModelSchema<T, K extends keyof T> {
-    properties: Map<K, PropertyOptions>
+export interface ModelSchema {
+    properties: Map<string, PropertyOptions>
 }
 
-export interface ModelConstructor<T> extends Function {
-    $mdmx?: ModelSchema<T, keyof T>
+export interface ModelConstructor extends Function {
+    $mdmx?: ModelSchema
 }
 
 export type AnnotationEntries = AnnotationsMap<Record<string, unknown>, PropertyKey>

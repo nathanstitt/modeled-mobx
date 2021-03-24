@@ -1,6 +1,6 @@
 import { modelize } from './modelize'
 import { hydrate, serialize } from './serialize-hydrate'
-import { model, field } from './decorators'
+import { model, field } from './schema'
 import { getParentOf } from './inverse'
 
 class AssociatedModel {
@@ -50,6 +50,12 @@ describe('Serialize/Hydrate', () => {
         expect(m.hasMany.length).toEqual(1)
         expect(m.hasMany[0].name).toEqual('foo')
         expect(m.unModeled).toEqual('was set')
+    })
+
+    it('skips hydration if already a model', () => {
+        const hasOne = new AssociatedModel()
+        const m2 = hydrate(SerializeTestModel, { hasOne })
+        expect(m2.hasOne).toBe(hasOne)
     })
 
     it('serializes', () => {

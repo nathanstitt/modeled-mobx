@@ -1,6 +1,6 @@
 import { hydrate } from './serialize-hydrate'
 import { modelize } from './modelize'
-import { field, model } from './decorators'
+import { field, model } from './schema'
 import { observable, autorun, runInAction } from "mobx"
 
 class AssociatedModel {

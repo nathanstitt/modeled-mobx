@@ -1,7 +1,7 @@
 import { modelize } from './modelize'
 import { hydrate } from './serialize-hydrate'
 import { getParentOf } from './inverse'
-import { field, model } from './decorators'
+import { field, model } from './schema'
 
 class Parent {
 

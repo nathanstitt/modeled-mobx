@@ -1,7 +1,6 @@
 import { modelize } from './modelize'
-import { getSchema } from './schema'
+import { field, model, getSchema } from './schema'
 import { autorun, observable, runInAction } from "mobx"
-import { field, model } from './decorators'
 import { hydrate } from './serialize-hydrate'
 
 class OnlyMobX {
@@ -37,6 +36,21 @@ class SimpleTestModel extends Base {
     }
 }
 
+class SecondTestModel extends Base {
+    @field baz = 'bar'
+    constructor() {
+        super()
+        modelize(this)
+    }
+}
+
+class SuperModel extends SimpleTestModel {
+    constructor() {
+        super()
+        modelize(this)
+    }
+}
+
 describe('Model using Decorators', () => {
     it('can decorate mobx-only', () => {
         const mbx = new OnlyMobX()
@@ -49,14 +63,22 @@ describe('Model using Decorators', () => {
     })
 
     it('records schema independantly', () => {
-        expect(getSchema(SimpleTestModel)).not.toBe(getSchema(Base))
+        const m1 = new SimpleTestModel()
+        const m2 = new SecondTestModel()
+        expect(getSchema(m1)).not.toBe(getSchema(m2))
+        expect(Array.from(getSchema(m1)!.properties.keys())).toContain('bar')
+        expect(Array.from(getSchema(m2)!.properties.keys())).toContain('baz')
+    })
+
+    it('honors models on subclass', () => {
+        const m = hydrate(SuperModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
+        expect(m.hasOne).toBeInstanceOf(AssociatedModel)
     })
 
     it('sends non-fields to mobx', async () => {
         const m = new SimpleTestModel()
-        const s = getSchema(SimpleTestModel)
+        const s = getSchema(m)
         expect(s).not.toBe(false)
-        if (s === false) return; // typeguard
         const spy = jest.fn(() => { m.energy })
         autorun(spy)
         expect(spy).toHaveBeenCalledTimes(1)
