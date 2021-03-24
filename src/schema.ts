@@ -17,6 +17,7 @@ export class ModelSchema implements Schema {
         }
         return false
     }
+
 }
 
 function decorate<T extends object>(model: T, propertyKey: string, options: ModelOption) {

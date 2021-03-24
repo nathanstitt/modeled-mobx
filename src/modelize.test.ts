@@ -82,6 +82,12 @@ describe('Models', () => {
         expect(sm.bar).toHaveLength(1)
         expect(sm.bar[0]).toBeInstanceOf(AssociatedModel)
         expect(sm.bar[0].avalue).toEqual(42)
+        const spy = jest.fn(() => sm.bar.length)
+        autorun(spy)
+        runInAction(() => sm.bar.push({} as any as AssociatedModel))
+        expect(spy).toHaveBeenCalledTimes(2)
+        expect(sm.bar).toHaveLength(2)
+        expect(sm.bar[1]).toBeInstanceOf(AssociatedModel)
     })
 
     it('sets hasOne', () => {
@@ -90,5 +96,10 @@ describe('Models', () => {
         })
         expect(sm.baz).toBeInstanceOf(AssociatedModel)
         expect(sm.baz.avalue).toEqual(12)
+        const spy = jest.fn(() => sm.baz.avalue)
+        autorun(spy)
+        runInAction(() => sm.baz = {} as any as AssociatedModel)
+        expect(spy).toHaveBeenCalledTimes(2)
+        expect(sm.baz).toBeInstanceOf(AssociatedModel)
     })
 })

@@ -1,7 +1,7 @@
 import { findOrCreateSchema, getSchema } from './schema'
 import { observable, makeObservable, CreateObservableOptions } from "mobx"
 import { ModelInstance, AnnotationEntries } from './types'
-
+import { configureHasMany, configureHasOne } from './interceptors'
 
 declare type ModelizeProperties<T> = {
     [P in keyof T]: Function // eslint-disable-line @typescript-eslint/ban-types
@@ -37,4 +37,21 @@ export function modelize(
         }
     })
     makeObservable(model, mobxAnnotations, options)
+
+    Object.keys(mobxAnnotations).forEach(property => {
+        const options = schema.properties.get(property)
+        if (options && options.type == 'model') {
+            if (Array.isArray(model[property])) {
+                 configureHasMany(model, property, options.model)
+             } else {
+                 configureHasOne(model, property, options.model)
+             }
+        }
+    })
+    // schema.properties.forEach((options, key) => {
+    //     if (options.annotated = true
+    //     //
+
+    // })
+
   }
