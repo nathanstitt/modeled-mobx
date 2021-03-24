@@ -12,9 +12,8 @@ function hydrateFromSchema(
         instance[prop] = attrs[prop]
         return
     }
-    const options = schema.properties.get(prop) // getPropertyOptions(instance, prop)
-
-    if ( options?.type == 'model') {
+    const options = schema.properties.get(prop)
+    if ( options && options.type == 'model') {
         if (Array.isArray(instance[prop])) {
             const values = Array.isArray(attrs[prop]) ?
                 attrs[prop].map((childProps:any) => hydrate(options.model, childProps, instance)) :
