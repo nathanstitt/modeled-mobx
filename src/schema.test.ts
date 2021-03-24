@@ -59,15 +59,15 @@ describe('Model using Decorators', () => {
         expect(spy).toHaveBeenCalledTimes(1)
         runInAction(() => mbx.name = 'a new value')
         expect(spy).toHaveBeenCalledTimes(2)
-        expect(getSchema(OnlyMobX)).toBe(false)
+        expect(getSchema(OnlyMobX)).toBeUndefined()
     })
 
     it('records schema independantly', () => {
         const m1 = new SimpleTestModel()
         const m2 = new SecondTestModel()
         expect(getSchema(m1)).not.toBe(getSchema(m2))
-        expect(Array.from(getSchema(m1)!.properties.keys())).toContain('bar')
-        expect(Array.from(getSchema(m2)!.properties.keys())).toContain('baz')
+        expect(Array.from(getSchema(m1)?.properties.keys() || [])).toContain('bar')
+        expect(Array.from(getSchema(m2)?.properties.keys() || [])).toContain('baz')
     })
 
     it('honors models on subclass', () => {
@@ -78,7 +78,7 @@ describe('Model using Decorators', () => {
     it('sends non-fields to mobx', async () => {
         const m = new SimpleTestModel()
         const s = getSchema(m)
-        expect(s).not.toBe(false)
+        expect(s).not.toBeUndefined()
         const spy = jest.fn(() => { m.energy })
         autorun(spy)
         expect(spy).toHaveBeenCalledTimes(1)

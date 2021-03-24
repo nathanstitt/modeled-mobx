@@ -44,7 +44,7 @@ export function model(model: Model) {
 }
 
 export function getSchema(model: any): ModelSchema | undefined {
-    return model[$schema] || false
+    return model[$schema]
 }
 
 export function findOrCreateSchema(model: any): ModelSchema {
