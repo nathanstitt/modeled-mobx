@@ -112,5 +112,14 @@ describe('Model using Decorators', () => {
         runInAction(() => m.hasOne.name = 'bob')
         expect(hoSpy).toHaveBeenCalledTimes(2)
         expect(m.hasOne).toBeInstanceOf(AssociatedModel)
+
+        // TODO: these break.  decorators do not seem to work with inheritance
+        // they do work with modelize though, check the modelize tests
+        // runInAction(() => {
+        //     m.hasOne = {name: 'jane'}
+        //     m.hasMany = [ { name: 'Jimbo' }]
+        // })
+        // expect(m.hasMany[0]).toBeInstanceOf(AssociatedModel)
+        // expect(m.hasOne).toBeInstanceOf(AssociatedModel)
     })
 })

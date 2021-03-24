@@ -20,24 +20,24 @@ export class ModelSchema implements Schema {
 
 }
 
-function decorate<T extends object>(model: T, propertyKey: string, options: ModelOption) {
-    observable(model, propertyKey as string)
-    findOrCreateSchema(model).recordProperty(propertyKey, options)
+function decorate<T extends object>(model: T, property: string, options: ModelOption) {
+    observable(model, property as string)
+    findOrCreateSchema(model).recordProperty(property, options)
 }
 
-export function field<T extends object>(target: T, propertyKey?: string): any {
-    if (propertyKey) {
-        decorate<T>(target, propertyKey, field)
+export function field<T extends object>(target: T, property?: string): any {
+    if (property) {
+        decorate<T>(target, property, field)
     } else {
-        return (target: T, propertyKey: string) => {
-            decorate<T>(target, propertyKey, field)
+        return (target: T, property: string) => {
+            decorate<T>(target, property, field)
         }
     }
 }
 
 export function model(model: Model) {
-    const decorator = <T extends object>(target: T, propertyKey: string) => {
-        decorate<T>(target, propertyKey, decorator)
+    const decorator = <T extends object>(target: T, property: string) => {
+        decorate<T>(target, property, decorator)
     }
     decorator.model = model
     return decorator

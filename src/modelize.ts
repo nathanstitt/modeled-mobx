@@ -48,10 +48,5 @@ export function modelize(
              }
         }
     })
-    // schema.properties.forEach((options, key) => {
-    //     if (options.annotated = true
-    //     //
-
-    // })
 
   }
