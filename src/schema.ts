@@ -4,7 +4,7 @@ import { observable } from 'mobx'
 const $schema = Symbol('modeled mobx schema')
 
 export class ModelSchema implements Schema {
-    properties = observable.map<string, PropertyOptions>({}, { deep: false })
+    properties = new Map<string, PropertyOptions>()
 
     recordProperty(prop: string, options: ModelOption): boolean {
         if (options === field) {
