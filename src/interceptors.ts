@@ -1,4 +1,4 @@
-import { intercept, observable } from "mobx"
+import { intercept, observable, IObservableArray, isObservableArray } from "mobx"
 import { hydrate } from './serialize-hydrate'
 import { Model, ModelInstance } from './types'
 import { recordParentOf } from './inverse'
@@ -17,8 +17,12 @@ export function configureHasOne(parent: ModelInstance, property: string, desired
 }
 
 export function configureHasMany(parent: ModelInstance, property: string, desiredModel: Model) {
-    const value = observable.array()
-    parent[property] = value as any
+    let value:IObservableArray = parent[property] //
+    if (!isObservableArray(value)) {
+        value = observable.array()
+        parent[property] = value
+    }
+
     const toModel = (attrs: Record<string, any>) => {
         let child: any
         if (attrs instanceof desiredModel) {

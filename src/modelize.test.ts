@@ -12,8 +12,10 @@ class SimpleTestModel {
     energy = 1
     bar: AssociatedModel[] = []
     baz!: AssociatedModel
+    _sharedArray = observable.array()
 
     constructor() {
+        this.bar = this._sharedArray
         modelize(this, {
             mbx: observable,
             energy: field,
@@ -88,6 +90,11 @@ describe('Models', () => {
         expect(spy).toHaveBeenCalledTimes(2)
         expect(sm.bar).toHaveLength(2)
         expect(sm.bar[1]).toBeInstanceOf(AssociatedModel)
+
+        // should not create new array
+        runInAction(() => sm.bar = [{ avalue: 1 }, { avalue: 2 }])
+        expect(sm._sharedArray).toBe(sm.bar)
+        expect(sm._sharedArray[0]).toBe(sm.bar[0])
     })
 
     it('sets hasOne', () => {
