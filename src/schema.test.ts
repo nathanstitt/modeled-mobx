@@ -1,7 +1,7 @@
 import { modelize } from './modelize'
 import { field, model, getSchema } from './schema'
 import { autorun, observable, runInAction } from "mobx"
-import { hydrate } from './serialize-hydrate'
+import { hydrateModel } from './serialize-hydrate'
 
 class OnlyMobX {
     @observable name = ''
@@ -71,7 +71,7 @@ describe('Model using Decorators', () => {
     })
 
     it('honors models on subclass', () => {
-        const m = hydrate(SuperModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
+        const m = hydrateModel(SuperModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
         expect(m.hasOne).toBeInstanceOf(AssociatedModel)
     })
 
@@ -96,13 +96,13 @@ describe('Model using Decorators', () => {
     })
 
     it('handles models', () => {
-        const m = hydrate(SimpleTestModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
+        const m = hydrateModel(SimpleTestModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
         expect(m.hasMany).toHaveLength(1)
         expect(m.hasMany[0].name).toEqual('jack')
 
         const hmSpy = jest.fn(() => { m.hasMany[0]?.name })
         autorun(hmSpy)
-        runInAction(() => m.hasMany = [ hydrate(AssociatedModel, { name: 'sara' }) ] )
+        runInAction(() => m.hasMany = [ hydrateModel(AssociatedModel, { name: 'sara' }) ] )
         expect(hmSpy).toHaveBeenCalledTimes(2)
         expect(m.hasMany[0].name).toEqual('sara')
 

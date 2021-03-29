@@ -1,5 +1,5 @@
 import { getSchema } from './schema'
-import { JSON, Model, ModelSchema} from './types'
+import { JSON, Model, ModelInstance, ModelSchema} from './types'
 import { recordParentOf } from './inverse'
 
 function hydrateFromSchema(
@@ -16,15 +16,15 @@ function hydrateFromSchema(
     if ( options && options.type == 'model') {
         if (Array.isArray(instance[prop])) {
             const values = Array.isArray(attrs[prop]) ?
-                attrs[prop].map((childProps:any) => hydrate(options.model, childProps, instance)) :
-                [hydrate(options.model, attrs[prop], instance)]
+                attrs[prop].map((childProps:any) => hydrateModel(options.model, childProps, instance)) :
+                [hydrateModel(options.model, attrs[prop], instance)]
 
             instance[prop].splice(0, instance[prop].length, ...values)
         } else {
             if (attrs[prop] instanceof options.model) {
                 instance[prop] = attrs[prop]
             } else {
-                instance[prop] = hydrate(options.model, attrs[prop], instance)
+                instance[prop] = hydrateModel(options.model, attrs[prop], instance)
             }
         }
     } else {
@@ -32,11 +32,15 @@ function hydrateFromSchema(
     }
 }
 
-export function hydrate<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> {
+export function hydrateModel<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> {
     if (typeof model.hydrate === 'function') {
         return recordParentOf(model.hydrate(attrs), parent)
     }
     const instance = new model(attrs)
+    return hydrateInstance(instance, attrs, parent)
+}
+
+export function hydrateInstance<T extends ModelInstance>(instance: T, attrs: any, parent?: any): T {
     recordParentOf(instance, parent)
     const schema = getSchema(instance)
     if (typeof instance.hydrate == 'function') {

@@ -1,5 +1,5 @@
 import { modelize } from './modelize'
-import { hydrate, serialize } from './serialize-hydrate'
+import { hydrateModel, hydrateInstance, serialize } from './serialize-hydrate'
 import { model, field } from './schema'
 import { getParentOf } from './inverse'
 
@@ -41,7 +41,7 @@ describe('Serialize/Hydrate', () => {
     let m!: SerializeTestModel
 
     beforeEach(() => {
-        m = hydrate(SerializeTestModel, { unModeled: 'was set', hasOne: { name: 'baz' }, hasMany: [{ name: 'foo' }] })
+        m = hydrateModel(SerializeTestModel, { unModeled: 'was set', hasOne: { name: 'baz' }, hasMany: [{ name: 'foo' }] })
     })
 
     it('hydrates from JSON', () => {
@@ -54,8 +54,22 @@ describe('Serialize/Hydrate', () => {
 
     it('skips hydration if already a model', () => {
         const hasOne = new AssociatedModel()
-        const m2 = hydrate(SerializeTestModel, { hasOne })
+        const m2 = hydrateModel(SerializeTestModel, { hasOne })
         expect(m2.hasOne).toBe(hasOne)
+    })
+
+    it('hydrates already instantiated model', () => {
+        const stm = new SerializeTestModel()
+        const existingHM = stm.hasMany
+        expect(existingHM).toBeInstanceOf(Array)
+        expect(existingHM.length).toEqual(0)
+        hydrateInstance(stm,  { unModeled: 'was set', hasOne: { name: 'baz' }, hasMany: [{ name: 'foo' }] })
+        expect(stm.hasOne).toBeInstanceOf(AssociatedModel)
+        expect(stm.hasOne?.name).toEqual('baz')
+        expect(stm.hasMany).toBe(existingHM)
+        expect(stm.hasMany.length).toEqual(1)
+        expect(stm.hasMany[0].name).toEqual('foo')
+        expect(stm.unModeled).toEqual('was set')
     })
 
     it('serializes', () => {
@@ -67,7 +81,7 @@ describe('Serialize/Hydrate', () => {
 
     it('uses hydrate/serialize methods if present', () => {
         const parent = {}
-        const h = hydrate(HydratedModel, { foo: 'bar' }, parent)
+        const h = hydrateModel(HydratedModel, { foo: 'bar' }, parent)
         expect(h.hydrate).toHaveBeenCalled()
         expect(getParentOf(h)).toEqual(parent)
         expect((h as any).foo).toBeUndefined()
@@ -77,11 +91,11 @@ describe('Serialize/Hydrate', () => {
 
     it('hydrates arrays', () => {
         // malformed, not given an array
-        const m = hydrate(SerializeTestModel, { hasMany: { name: 'Bob' } })
+        const m = hydrateModel(SerializeTestModel, { hasMany: { name: 'Bob' } })
         expect(m.hasMany).toHaveLength(1)
         expect(m.hasMany[0].name).toEqual('Bob')
 
-        const tm = hydrate(SerializeTestModel, { hasMany: [{ name: 'Jim' }, {name: 'Jill'} ] })
+        const tm = hydrateModel(SerializeTestModel, { hasMany: [{ name: 'Jim' }, {name: 'Jill'} ] })
         expect(tm.hasMany).toHaveLength(2)
         expect(tm.hasMany[0].name).toEqual('Jim')
         expect(tm.hasMany[1].name).toEqual('Jill')

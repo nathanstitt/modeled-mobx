@@ -14,7 +14,7 @@ options passed to `modelize`
 ## Example
 
 ```typescript
-import { modelize, field, model, hydrate, serialize, getParentOf } from 'modeled-mobx'
+import { modelize, field, model, hydrateModel, serialize, getParentOf } from 'modeled-mobx'
 import { observable, computed } from 'mobx'
 
 class Item {
@@ -51,7 +51,7 @@ export class Box {
 }
 
 
-const box = hydrate(Box, {
+const box = hydrateModel(Box, {
     width: 10, height: 10, depth: 10, serial: 1234,
     items: [{ name: 'Box #1' }, { name: 'Box #2' }],
     defaultItem: { name: 'Fruit' },

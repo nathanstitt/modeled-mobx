@@ -11,7 +11,9 @@ export interface Model extends Function {
     new(...args: any[]): any;
 }
 
-export type ModelInstance = InstanceType<Model>
+export interface ModelInstance extends InstanceType<Model> {
+    hydrate?(attrs: any): void
+}
 
 export interface ModelOption extends Function {
     model?: Model

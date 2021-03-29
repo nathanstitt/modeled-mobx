@@ -1,5 +1,5 @@
 import { modelize } from './modelize'
-import { hydrate } from './serialize-hydrate'
+import { hydrateModel } from './serialize-hydrate'
 import { getParentOf } from './inverse'
 import { field, model } from './schema'
 
@@ -30,7 +30,7 @@ class Child {
 
 describe('inverse', () => {
     it('records and gets the parent for a child', () => {
-        const parent = hydrate(Parent, {
+        const parent = hydrateModel(Parent, {
             faveChild: { name: 'my favorite' },
             children: [
                 { name: 'One' },

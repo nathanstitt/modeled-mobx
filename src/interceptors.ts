@@ -1,5 +1,5 @@
 import { intercept, observable, IObservableArray, isObservableArray } from "mobx"
-import { hydrate } from './serialize-hydrate'
+import { hydrateModel } from './serialize-hydrate'
 import { Model, ModelInstance } from './types'
 import { recordParentOf } from './inverse'
 
@@ -8,7 +8,7 @@ export function configureHasOne(parent: ModelInstance, property: string, desired
 
         if (change.newValue) {
             if (!(change.newValue instanceof desiredModel)) {
-                change.newValue = hydrate(desiredModel, change.newValue)
+                change.newValue = hydrateModel(desiredModel, change.newValue)
             }
             recordParentOf(change.newValue, parent)
         }
@@ -28,7 +28,7 @@ export function configureHasMany(parent: ModelInstance, property: string, desire
         if (attrs instanceof desiredModel) {
             child = attrs
         } else {
-            child = hydrate<any>(desiredModel, attrs)
+            child = hydrateModel(desiredModel, attrs)
         }
         recordParentOf(child, parent)
         return child

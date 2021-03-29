@@ -1,4 +1,4 @@
-import { hydrate } from './serialize-hydrate'
+import { hydrateModel } from './serialize-hydrate'
 import { modelize } from './modelize'
 import { field, model } from './schema'
 import { observable, autorun, runInAction } from "mobx"
@@ -78,7 +78,7 @@ describe('Models', () => {
     })
 
     it('sets hasMany', () => {
-        const sm = hydrate(SuperModel, {
+        const sm = hydrateModel(SuperModel, {
             bar: [{ avalue: 42 }],
         })
         expect(sm.bar).toHaveLength(1)
@@ -98,7 +98,7 @@ describe('Models', () => {
     })
 
     it('sets hasOne', () => {
-        const sm = hydrate(SuperModel, {
+        const sm = hydrateModel(SuperModel, {
             baz: { avalue: 12 },
         })
         expect(sm.baz).toBeInstanceOf(AssociatedModel)
