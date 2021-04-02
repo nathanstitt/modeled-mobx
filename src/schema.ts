@@ -5,7 +5,6 @@ const $schema = Symbol('modeled mobx schema')
 
 export class ModelSchema implements Schema {
     properties = new Map<string, PropertyOptions>()
-
     recordProperty(prop: string, options: ModelOption): boolean {
         if (options === field) {
             this.properties.set(prop, { type: 'field', annotated: false })
@@ -17,7 +16,6 @@ export class ModelSchema implements Schema {
         }
         return false
     }
-
 }
 
 function decorate<T extends object>(model: T, property: string, options: ModelOption) {

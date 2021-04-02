@@ -20,7 +20,7 @@ class AssociatedModel {
 class Base {
     @observable afield = 1
     constructor() {
-        modelize(this)
+        modelize(this, { decorateOnly: true })
     }
 }
 
@@ -44,12 +44,6 @@ class SecondTestModel extends Base {
     }
 }
 
-class SuperModel extends SimpleTestModel {
-    constructor() {
-        super()
-        modelize(this)
-    }
-}
 
 describe('Model using Decorators', () => {
     it('can decorate mobx-only', () => {
@@ -70,9 +64,12 @@ describe('Model using Decorators', () => {
         expect(Array.from(getSchema(m2)?.properties.keys() || [])).toContain('baz')
     })
 
-    it('honors models on subclass', () => {
-        const m = hydrateModel(SuperModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
-        expect(m.hasOne).toBeInstanceOf(AssociatedModel)
+    it('decorates when subclass is present', () => {
+        const m = hydrateModel(SimpleTestModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
+        const spy = jest.fn(() => { m.afield })
+        autorun(spy)
+        runInAction(() => m.afield = 3)
+        expect(spy).toHaveBeenCalledTimes(2)
     })
 
     it('sends non-fields to mobx', async () => {
@@ -86,7 +83,7 @@ describe('Model using Decorators', () => {
         expect(spy).toHaveBeenCalledTimes(2)
     })
 
-    it('handles fields', async () => {
+    fit('handles fields', async () => {
         const m = new SimpleTestModel()
         const spy = jest.fn(() => { m.bar })
         autorun(spy)
