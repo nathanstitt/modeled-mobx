@@ -7,11 +7,11 @@ export class ModelSchema implements Schema {
     properties = new Map<string, PropertyOptions>()
     recordProperty(prop: string, options: ModelOption): boolean {
         if (options === field) {
-            this.properties.set(prop, { type: 'field', annotated: false })
+            this.properties.set(prop, { type: 'field' })
             return true
         }
         if (typeof options === 'function' && options.model) {
-            this.properties.set(prop, { type: 'model', annotated: false, model: options.model })
+            this.properties.set(prop, { type: 'model', model: options.model })
             return true
         }
         return false
@@ -35,6 +35,9 @@ export function field<T extends object>(target: T, property?: string): any {
 
 export function model(model: Model) {
     const decorator = <T extends object>(target: T, property: string) => {
+        if (!model) {
+            throw new Error(`model() called without a value on property ${target}#${property}`)
+        }
         decorate<T>(target, property, decorator)
     }
     decorator.model = model

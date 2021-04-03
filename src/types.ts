@@ -20,8 +20,8 @@ export interface ModelOption extends Function {
 }
 
 export type PropertyOptions =
-    | { type: 'field', annotated: boolean }
-    | { type: 'model', annotated: boolean, model: Model }
+    | { type: 'field' }
+    | { type: 'model', model: Model }
 
 export interface ModelSchema {
     properties: Map<string, PropertyOptions>

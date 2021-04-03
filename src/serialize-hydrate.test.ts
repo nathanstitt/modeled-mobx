@@ -31,9 +31,6 @@ class HydratedModel {
     serialize = jest.fn(function() {
         return { name: 'foo' }
     })
-    constructor() {
-        modelize(this, {}) // shouldn't error with empty properties
-    }
 }
 
 
@@ -100,4 +97,15 @@ describe('Serialize/Hydrate', () => {
         expect(tm.hasMany[0].name).toEqual('Jim')
         expect(tm.hasMany[1].name).toEqual('Jill')
     })
+
+    it('can hydrate repeatedly', () => {
+        const m = hydrateModel(SerializeTestModel, { hasMany: [{ name: 'Bob' }]})
+        hydrateInstance(m, { hasMany: [{ name: 'Tom' }, { name: 'Jane' }] })
+        expect(m.hasMany).toHaveLength(2)
+        const m2 = hydrateModel(SerializeTestModel, { hasMany: [{ name: 'Bob' }]})
+        expect(m2.hasMany[0]).toBeInstanceOf(AssociatedModel)
+        m2.hasMany.push({ name: 'Rob' })
+        expect(m2.hasMany[1]).toBeInstanceOf(AssociatedModel)
+    })
+
 })

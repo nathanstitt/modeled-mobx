@@ -1,5 +1,5 @@
 import { findOrCreateSchema, getSchema } from './schema'
-import { observable, makeObservable, CreateObservableOptions } from "mobx"
+import { observable, makeObservable, CreateObservableOptions, isObservableProp } from "mobx"
 import { ModelInstance, AnnotationEntries } from './types'
 import { configureHasMany, configureHasOne } from './interceptors'
 
@@ -15,7 +15,6 @@ export function modelize(model: ModelInstance, properties?: ModelizeProperties<M
 export function modelize(model: ModelInstance, properties?: DecorateOnly | ModelizeProperties<ModelInstance>,options?: CreateObservableOptions): void {
 
     const decoratedSchema = getSchema(model)
-
     if ((!properties && !decoratedSchema) || (properties && properties.decorateOnly)) {
         makeObservable(model)
         return
@@ -27,22 +26,26 @@ export function modelize(model: ModelInstance, properties?: DecorateOnly | Model
     if (properties) {
         Object.keys(properties).forEach(property => {
             if (!schema.recordProperty(property, properties[property])) {
-                mobxAnnotations[property] = properties[property] as any
+                    mobxAnnotations[property] = properties[property] as any
             }
         })
     }
-    schema.properties.forEach((options, key) => {
-        if (!options.annotated) {
-            mobxAnnotations[key] = observable
-            options.annotated = true
+
+    Array.from(schema.properties.keys()).forEach((property) => {
+        if (Object.prototype.hasOwnProperty.call(model, property) && !isObservableProp(model, property)) {
+            mobxAnnotations[property] = observable
         }
     })
 
-    makeObservable(model, mobxAnnotations, options)
+    if (Object.keys(mobxAnnotations).length) {
+        makeObservable(model, mobxAnnotations, options)
+    } else {
+        makeObservable(model)
 
-    Object.keys(mobxAnnotations).forEach(property => {
-        const options = schema.properties.get(property)
-        if (options && options.type == 'model') {
+    }
+
+    schema.properties.forEach((options, property) => {
+        if (options && options.type == 'model' && (isObservableProp(model, property))) {
             if (Array.isArray(model[property])) {
                  configureHasMany(model, property, options.model)
              } else {

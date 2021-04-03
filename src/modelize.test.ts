@@ -25,39 +25,7 @@ class SimpleTestModel {
     }
 }
 
-class SuperModel extends SimpleTestModel {
-    foo = 1
-    constructor() {
-        super()
-        modelize(this, {
-            foo: observable
-        })
-    }
-}
-
 describe('Models', () => {
-    it('inherits', () => {
-        const m = new SuperModel()
-        const energySpy = jest.fn(() => m.energy )
-        const fooSpy = jest.fn(() => m.foo )
-        const avalueSpy = jest.fn(() => m.baz?.avalue)
-        autorun(energySpy)
-        autorun(fooSpy)
-        autorun(avalueSpy)
-
-        runInAction(() => m.energy = 12)
-        expect(energySpy).toHaveBeenCalledTimes(2)
-
-        runInAction(() => m.foo = 23)
-        expect(fooSpy).toHaveBeenCalledTimes(2)
-
-        runInAction(() => m.baz = new AssociatedModel())
-        expect(avalueSpy).toHaveBeenCalledTimes(2) // baz is observable
-        runInAction(() => m.baz.avalue = 42)
-        // avalue is not observable autorun won't be called but also shouldn't error or anything
-        expect(avalueSpy).toHaveBeenCalledTimes(2)
-
-    })
 
     it('forwards unknown to mobx', () => {
         const m = new SimpleTestModel()
@@ -78,7 +46,7 @@ describe('Models', () => {
     })
 
     it('sets hasMany', () => {
-        const sm = hydrateModel(SuperModel, {
+        const sm = hydrateModel(SimpleTestModel, {
             bar: [{ avalue: 42 }],
         })
         expect(sm.bar).toHaveLength(1)
@@ -98,7 +66,7 @@ describe('Models', () => {
     })
 
     it('sets hasOne', () => {
-        const sm = hydrateModel(SuperModel, {
+        const sm = hydrateModel(SimpleTestModel, {
             baz: { avalue: 12 },
         })
         expect(sm.baz).toBeInstanceOf(AssociatedModel)
