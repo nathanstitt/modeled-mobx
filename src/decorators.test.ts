@@ -46,6 +46,12 @@ describe('Simple Model test', () => {
         autorun(spy)
         runInAction(() => m.afield = 42)
         expect(spy).toHaveBeenCalledTimes(2)
-
+    })
+    it('supports observable', () => {
+        const m = hydrateModel(SimpleTestModel, { hasOne: { name: 'jill' }, hasMany: [ { name: 'jack' } ] })
+        const spy = jest.fn(() => m.energy)
+        autorun(spy)
+        runInAction(() => m.energy = 42)
+        expect(spy).toHaveBeenCalledTimes(2)
     })
 })

@@ -25,6 +25,8 @@ function decorate<T extends object>(model: T, property: string, options: ModelOp
 
 export function field<T extends object>(target: T, property?: string): any {
     if (property) {
+        observable(model, property as string)
+
         decorate<T>(target, property, field)
     } else {
         return (target: T, property: string) => {

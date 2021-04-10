@@ -20,7 +20,7 @@ class AssociatedModel {
 class Base {
     @observable afield = 1
     constructor() {
-        modelize(this, { decorateOnly: true })
+        modelize(this)
     }
 }
 

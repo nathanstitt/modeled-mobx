@@ -1,7 +1,8 @@
-import { intercept, observable, IObservableArray, isObservableArray } from "mobx"
+import { intercept, observable, IObservableArray, isObservableProp, isObservableArray } from "mobx"
 import { hydrateModel } from './serialize-hydrate'
 import { Model, ModelInstance } from './types'
 import { recordParentOf } from './inverse'
+import { ModelSchema } from './schema'
 
 export function configureHasOne(parent: ModelInstance, property: string, desiredModel: Model) {
     intercept(parent, property, (change: any) => {
@@ -42,5 +43,17 @@ export function configureHasMany(parent: ModelInstance, property: string, desire
     intercept(parent, property, (change: any) => {
         (parent[property] as any).replace(change.newValue.map(toModel))
         return null
+    })
+}
+
+export function addInterceptors(model: ModelInstance, schema: ModelSchema) {
+    schema.properties.forEach((options, property) => {
+        if (options && options.type == 'model' && (isObservableProp(model, property))) {
+            if (Array.isArray(model[property])) {
+                configureHasMany(model, property, options.model)
+            } else {
+                configureHasOne(model, property, options.model)
+            }
+        }
     })
 }
