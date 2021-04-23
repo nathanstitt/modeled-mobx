@@ -18,7 +18,7 @@ import { modelize, field, model, hydrateModel, serialize, getParentOf } from 'mo
 import { observable, computed } from 'mobx'
 
 class Item {
-    name = ''      // all properties MUST be given values, see edge cases section below
+    name = '' 
     material = ''
     get box() { return getParentOf<Box>(this) }
     constructor() {
@@ -37,13 +37,13 @@ export class Box {
     @field depth = 0;
 
     @observable serial: number = 0; // observable from mobx will be set by hydrate
-    // and initialized by modelize.  It will not be serialized
+                                    // and initialized by modelize.  It will not be serialized
     @computed get volume() {
         return this.width * this.height * this.depth;
     }
 
     @model(Item) items: Item[] = []; // note: this is an array of "item" models
-    @model(Item) defaultItem?: Item = undefined; // and this one is a single model
+    @model(Item) defaultItem?: Item; // and this one is a single model
 
     constructor() {
         modelize(this) // individual fields do not need to be specified when using decorators
@@ -66,38 +66,31 @@ console.log(serialize(box))
 //    defaultItem: { name: 'Fruit' }
 //  }
 
-
 ```
 
-## Edge cases
+## Edge cases and limitations
 
 #### properties must be assigned a value 
 
-When using Javascript, if a property is not initialized, Mobx will raise an exception: `Cannot apply 'observable' to '<property name>': Field not found`
+When using Javascript decorators and uninitialized properties, Mobx may raise an exception: `Cannot apply 'observable' to '<property name>': Field not found`. This is caused by an incorrect babel configuration.  More info: https://github.com/nathanstitt/modeled-mobx/issues/1
 
-for instance:
+#### there must be properties to decorate
+
+
+An exception will be raised if modelize is called with no properties and none are decorated.
+
 ```js
-class Item {
-    name
-    constructor() {
-        modelize(this, {
-            name: field,
-        })
-    }
+
+class EmptyThing {
+   name = 'empty'
+   constructor() {
+      modelize(this);
+   }
 }
+
+new EmptyThing() // raises "[MobX] No annotations were passed to makeObservable, but no decorated members have been found either"
 ```
 
-Will trigger the exception, but this usage is fine:
-```js
-class Item {
-    name = ''
-    constructor() {
-        modelize(this, {
-            name: field,
-        })
-    }
-}
-```
+#### inheritance is tricky
 
-
-This seems to be a limitation of ES6.  If a field is present but not given a value, it will be "undefined", and MobX thinks that it's not present. 
+There have been multiple bugs worked around in attempting to inherit from a modelized base class.  It now seems to be working but there may still be lingering bugs.  Please open issues if you note any weirdness. 

@@ -33,6 +33,7 @@ function hydrateFromSchema(
 }
 
 export function hydrateModel<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> {
+    if (model == null) { throw new Error(`unable to hydrate null/undefined Model`); }
     if (typeof model.hydrate === 'function') {
         return recordParentOf(model.hydrate(attrs), parent)
     }
