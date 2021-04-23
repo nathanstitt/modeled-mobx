@@ -36,7 +36,7 @@ export function field<T extends object>(target: T, property?: string): any {
 export function model(model: Model) {
     const decorator = <T extends object>(target: T, property: string) => {
         if (!model) {
-            throw new Error(`model() called without a value on property ${target?.constructor.name}#${property}.  Perhaps it was not imported correctly?`);
+            throw new Error(`model() called without a value on property ${target.constructor && target.constructor.name}#${property}.  Perhaps it was not imported correctly?`);
         }
         decorate<T>(target, property, decorator)
     }
