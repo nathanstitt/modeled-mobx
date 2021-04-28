@@ -1,4 +1,5 @@
 import { getSchema } from './schema'
+import { action } from 'mobx'
 import { JSON, Model, ModelInstance, ModelSchema} from './types'
 import { recordParentOf } from './inverse'
 
@@ -32,16 +33,16 @@ function hydrateFromSchema(
     }
 }
 
-export function hydrateModel<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> {
+export const hydrateModel = action(<T extends Model>(model: T, attrs: any, parent?: any): InstanceType<T> => {
     if (model == null) { throw new Error(`unable to hydrate null/undefined Model`); }
     if (typeof model.hydrate === 'function') {
         return recordParentOf(model.hydrate(attrs), parent)
     }
     const instance = new model(attrs)
     return hydrateInstance(instance, attrs, parent)
-}
+})
 
-export function hydrateInstance<T extends ModelInstance>(instance: T, attrs: any, parent?: any): T {
+export const hydrateInstance = action(<T extends ModelInstance>(instance: T, attrs: any, parent?: any): T => {
     recordParentOf(instance, parent)
     const schema = getSchema(instance)
     if (typeof instance.hydrate == 'function') {
@@ -52,7 +53,7 @@ export function hydrateInstance<T extends ModelInstance>(instance: T, attrs: any
         })
     }
     return instance
-}
+})
 
 export function serialize<T extends object>(model: T): JSON {
     if (typeof model['serialize'] == 'function') {
