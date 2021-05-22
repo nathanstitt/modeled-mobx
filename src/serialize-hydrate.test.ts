@@ -98,6 +98,14 @@ describe('Serialize/Hydrate', () => {
         expect(tm.hasMany[1].name).toEqual('Jill')
     })
 
+    it('skips creating model if already an instance', () => {
+        const child = new AssociatedModel()
+        const m = hydrateModel(SerializeTestModel, {
+            hasMany: [ child ]
+        })
+        expect(m.hasMany[0]).toBe(child)
+    })
+
     it('can hydrate repeatedly', () => {
         const m = hydrateModel(SerializeTestModel, { hasMany: [{ name: 'Bob' }]})
         hydrateInstance(m, { hasMany: [{ name: 'Tom' }, { name: 'Jane' }] })
