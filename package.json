@@ -1,6 +1,6 @@
 {
   "name": "modeled-mobx",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "MobX powered classes with type-coercion and serialization/hydration",
   "author": "nathanstitt",
   "license": "MIT",
