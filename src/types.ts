@@ -12,7 +12,7 @@ export interface Model extends Function {
 }
 
 export interface ModelInstance extends InstanceType<Model> {
-    hydrate?(attrs: any): void
+    hydrate?(attrs?: Object): void
 }
 
 export interface ModelOption extends Function {

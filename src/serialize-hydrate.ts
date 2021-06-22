@@ -6,9 +6,10 @@ import { recordParentOf } from './inverse'
 function hydrateFromSchema(
     instance: any,
     prop: string,
-    attrs?: any,
+    attrs?: Object,
     schema?: ModelSchema,
 ): void {
+    if (!attrs) return
     if (!schema) {
         instance[prop] = attrs[prop]
         return
@@ -33,7 +34,7 @@ function hydrateFromSchema(
     }
 }
 
-export const hydrateModel = action(<T extends Model>(model: T, attrs?: any, parent?: any): InstanceType<T> => {
+export const hydrateModel = action(<T extends Model>(model: T, attrs?: Object, parent?: any): InstanceType<T> => {
     if (model == null) { throw new Error(`unable to hydrate null/undefined Model`); }
     if (attrs instanceof model) {
         return recordParentOf(attrs, parent)
@@ -45,7 +46,7 @@ export const hydrateModel = action(<T extends Model>(model: T, attrs?: any, pare
     return hydrateInstance(instance, attrs, parent)
 })
 
-export const hydrateInstance = action(<T extends ModelInstance>(instance: T, attrs?: any, parent?: any): T => {
+export const hydrateInstance = action(<T extends ModelInstance>(instance: T, attrs?: Object, parent?: any): T => {
     recordParentOf(instance, parent)
     const schema = getSchema(instance)
     if (typeof instance.hydrate == 'function') {
