@@ -116,4 +116,10 @@ describe('Serialize/Hydrate', () => {
         expect(m2.hasMany[1]).toBeInstanceOf(AssociatedModel)
     })
 
+    it('returns empty object when attrs are null/undefined', () => {
+        const m = hydrateModel(SerializeTestModel, { hasMany: [null]})
+        expect(m.hasMany).toHaveLength(1)
+        expect(m.hasMany[0]).toBeInstanceOf(AssociatedModel)
+        expect(m.hasMany[0].name).toBeUndefined()
+    })
 })
